@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/crm-api/v1/customers")
+@RequestMapping("/crm-api/v1")
 public class CustomerController {
     private final CustomerService customerService;
 
@@ -18,13 +18,20 @@ public class CustomerController {
         this.customerService = service;
     }
     // Get all customers
-    @GetMapping
+    @GetMapping("/admin/customers")
     public List<Customer> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 
+    @GetMapping("/sales/customers")
+    public ResponseEntity<List<Customer>> getAllCustomersForSale(){
+        List<Customer> list = customerService.getCustomersForSales();
+        if(list == null) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(list);
+    }
+
     // Get a customer by ID
-    @GetMapping("/{id}")
+    @GetMapping({"/admin/customers/{id}","/sales/customers/{id}"})
     public ResponseEntity<Customer> getCustomerById(@PathVariable UUID id) {
         return customerService.getCustomerById(id)
                 .map(ResponseEntity::ok)
@@ -32,7 +39,7 @@ public class CustomerController {
     }
 
     // Create a customer with an assigned user
-    @PostMapping("/{assignedUserId}")
+    @PostMapping("/admin/customers/{assignedUserId}")
     public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer, @PathVariable UUID assignedUserId) {
         return ResponseEntity.ok(customerService.createCustomer(customer, assignedUserId));
     }
@@ -48,7 +55,7 @@ public class CustomerController {
     }
 
     // Delete a customer
-    @DeleteMapping("/{id}")
+    @DeleteMapping({"/admin/customers/{id}"})
     public ResponseEntity<Void> deleteCustomer(@PathVariable UUID id) {
         customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build();

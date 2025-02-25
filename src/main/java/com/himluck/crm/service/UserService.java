@@ -1,7 +1,9 @@
 package com.himluck.crm.service;
 
 import com.himluck.crm.model.User;
+import com.himluck.crm.model.enums.Role;
 import com.himluck.crm.repository.UserRepository;
+import com.himluck.crm.utils.JwtFilter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.UUID;
 
 @Service
 public class UserService {
+
     UserRepository repository;
     public UserService(UserRepository repo){
         this.repository = repo;
@@ -33,6 +36,9 @@ public class UserService {
 
     public void deleteUser(User user) {
         repository.delete(user);
+    }
 
+    public List<User> getUsersInSales() {
+        return repository.findByRole(Role.SALES);
     }
 }

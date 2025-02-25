@@ -4,6 +4,7 @@ import com.himluck.crm.model.Customer;
 import com.himluck.crm.model.User;
 import com.himluck.crm.repository.CustomerRepository;
 import com.himluck.crm.repository.UserRepository;
+import com.himluck.crm.utils.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,14 +13,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class CustomerService {
 
 
     private CustomerRepository customerRepository;
     private  UserRepository userRepository;
-
-    public CustomerService(CustomerRepository customerRepository, UserRepository userRepository) {
+    private JwtFilter filter;
+    public CustomerService(CustomerRepository customerRepository, UserRepository userRepository, JwtFilter filter) {
+        this.filter = filter;
         this.customerRepository = customerRepository;
         this.userRepository = userRepository;
     }
@@ -68,4 +69,12 @@ public class CustomerService {
     public void deleteCustomer(UUID id) {
         customerRepository.deleteById(id);
     }
-}
+
+
+
+    public List<Customer> getCustomersForSales(){
+        User user = userRepository.findByEmail(filter.getLoggedInUserEmail()).orElse(null);
+        if(user == null) return null;
+        return customerRepository.findByAssignedTo(user);
+    }
+ }

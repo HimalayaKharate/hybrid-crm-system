@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/crm-api/v1/users")
+@RequestMapping("/crm-api/v1/admin/users")
 public class UserController {
     private UserService service;
 
@@ -25,6 +25,15 @@ public class UserController {
         }
         return ResponseEntity.ok(users);
     }
+
+    @GetMapping("/sales")
+    public ResponseEntity<List<User>> getUserInSales(){
+        List<User> list = service.getUsersInSales();
+        if(list.isEmpty()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(list);
+    }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserByEmail(@PathVariable UUID id){

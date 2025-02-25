@@ -52,4 +52,14 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         chain.doFilter(request, response);
     }
+
+    public String getLoggedInUserEmail(){
+        Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(user instanceof UserDetails){
+            return ((UserDetails) user).getUsername();
+        }
+        else{
+            return user.toString();
+        }
+    }
 }
